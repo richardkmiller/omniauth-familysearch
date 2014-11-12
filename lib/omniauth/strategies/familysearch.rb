@@ -31,6 +31,8 @@ module OmniAuth
       end
 
       def raw_info
+        api_site = options.client_options.api_site
+        access_token.client.connection.url_prefix = api_site if api_site
         @raw_info ||= access_token.get('/platform/users/current',
                                        :headers => { 'Accept' => 'application/x-fs-v1+json' },
                                        :parse => :json
