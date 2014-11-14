@@ -9,6 +9,15 @@ module OmniAuth
         :token_url => '/cis-web/oauth2/v3/token'
       }
 
+      option :access_token_options, {
+        :header_format => 'Bearer %s',
+        :param_name => 'access_token'
+      }
+
+      def access_token_options
+        options.access_token_options.inject({}) { |h,(k,v)| h[k.to_sym] = v; h }
+      end
+
       def request_phase
         super
       end
@@ -51,6 +60,20 @@ module OmniAuth
         user_info['email']
       end
 
+      protected
+
+      def build_access_token
+        # Fix added so that mobile clients can use this gem by providing access_token
+        # instead of passing signed_request and setting cookies.
+        if access_token = request.params["access_token"]
+          ::OAuth2::AccessToken.from_hash(
+            client,
+            {"access_token" => access_token}.update(access_token_options)
+          )
+        else
+          super
+        end
+      end
     end
   end
 end
