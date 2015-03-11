@@ -89,7 +89,7 @@ module OmniAuth
       end
 
       def build_mobile_url
-        base = options["client_options"]["api_site"]
+        base = options["client_options"]["site"]
         token_url = options["client_options"]["token_url"]
         params = { grant_type: request.params["grant_type"],
                    username: request.params["username"],
