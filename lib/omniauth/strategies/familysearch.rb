@@ -65,7 +65,16 @@ module OmniAuth
       def build_access_token
         # Fix added so that mobile clients can use this gem by providing access_token
         # instead of passing signed_request and setting cookies.
-        if access_token = request.params["access_token"]
+        if has_login?
+          res = Net::HTTP.post_form(URI.parse(build_mobile_url), {} )
+          request_hash = JSON.parse(res.body)
+          access_token = request_hash["token"]
+        else
+          access_token = request.params["access_token"]
+        end
+
+        # if access_token = request.params["access_token"]
+        if access_token
           ::OAuth2::AccessToken.from_hash(
             client,
             {"access_token" => access_token}.update(access_token_options)
@@ -73,6 +82,23 @@ module OmniAuth
         else
           super
         end
+      end
+
+      def has_login?
+        request.params["grant_type"] == "password"
+      end
+
+      def build_mobile_url
+        base = options["client_options"]["api_site"]
+        token_url = options["client_options"]["token_url"]
+        params = { grant_type: request.params["grant_type"],
+                   username: request.params["username"],
+                   password: request.params["password"],
+                   client_id: options["client_id"]
+        }
+        url = URI("#{base}#{token_url}")
+        url.query = params.to_param
+        url.to_s
       end
     end
   end
