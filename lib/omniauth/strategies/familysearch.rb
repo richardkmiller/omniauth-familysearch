@@ -66,7 +66,7 @@ module OmniAuth
         # Fix added so that mobile clients can use this gem by providing access_token
         # instead of passing signed_request and setting cookies.
         if has_login?
-          res = Net::HTTP.post_form(URI.parse(build_mobile_url), {} )
+          res = Net::HTTP.post_form(URI.parse(build_mobile_url), 'q' => 'ruby', 'max' => '50')
           request_hash = JSON.parse(res.body)
           access_token = request_hash["token"]
         else
