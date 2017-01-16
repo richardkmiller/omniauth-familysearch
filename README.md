@@ -1,4 +1,4 @@
-# Omniauth FamilySearch [![Build Status](https://travis-ci.org/xrkhill/omniauth-familysearch.svg?branch=master)](https://travis-ci.org/xrkhill/omniauth-familysearch)
+# Omniauth FamilySearch
 
 OmniAuth strategy for FamilySearch OAuth2 API.
 
@@ -10,27 +10,37 @@ Note: FamilySearch [requires](https://familysearch.org/developers/docs/guides/au
 
 Add this line to your application's Gemfile:
 
-    gem 'omniauth-familysearch'
-
+    gem 'omniauth-familysearch', git: 'https://github.com/paulwhiting/omniauth-familysearch.git'
+    
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install omniauth-familysearch
 
 ## Usage
 
 ```ruby
-use OmniAuth::Builder do
-  provider :familysearch, ENV['FAMILYSEARCH_DEVELOPER_KEY'], ''
+# In config/initializers/omniauth.rb -- tested with rails 5
+# Choose one of these blocks to add to your initializer file
+
+# For production
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :familysearch, Rails.application.secrets.familysearch_key, '',
 end
 
-# To use the sandbox API
-use Omniauth::Builder do
-  provider :familysearch, ENV['FAMILYSEARCH_DEVELOPER_KEY'], '',
-    :client_options => { :site => 'https://sandbox.familysearch.org' }
+# For the beta server
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :familysearch, Rails.application.secrets.familysearch_key, '',
+    :client_options => {
+      site: 'https://identbeta.familysearch.org',   # for the beta server -- the oauth url
+      api_site: 'https://beta.familysearch.org'     # for the beta server -- the api url
+     }
+end
+
+# To use the sandbox/integration API
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :familysearch, Rails.application.secrets.familysearch_key, '',
+    :client_options => { :site => 'https://integration.familysearch.org' }
 end
 ```
 
