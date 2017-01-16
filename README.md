@@ -16,6 +16,10 @@ And then execute:
 
     $ bundle
 
+You may need to fix the version of omniauth used if you get errors at runtime
+
+    gem 'omniauth-oauth2', '~> 1.3.1'
+
 
 ## Usage
 
