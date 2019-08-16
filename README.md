@@ -10,42 +10,51 @@ Note: FamilySearch [requires](https://familysearch.org/developers/docs/guides/au
 
 Add this line to your application's Gemfile:
 
-    gem 'omniauth-familysearch', git: 'https://github.com/paulwhiting/omniauth-familysearch.git'
+    gem 'omniauth-familysearch', git: 'https://github.com/richardkmiller/omniauth-familysearch.git'
     
 And then execute:
 
     $ bundle
 
-You may need to fix the version of omniauth used if you get errors at runtime
-
-    gem 'omniauth-oauth2', '~> 1.3.1'
-
-
 ## Usage
 
 ```ruby
-# In config/initializers/omniauth.rb -- tested with rails 5
-# Choose one of these blocks to add to your initializer file
+# 
+# To use with plain OmniAuth, choose one of these blocks to add to your
+# initializer file, e.g. config/initializers/omniauth.rb
 
 # For production
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :familysearch, Rails.application.secrets.familysearch_key, '',
+  provider :familysearch, ENV['FAMILYSEARCH_KEY'], '',
 end
 
 # For the beta server
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :familysearch, Rails.application.secrets.familysearch_key, '',
-    :client_options => {
+  provider :familysearch, ENV['FAMILYSEARCH_KEY'], '',
+    client_options: {
       site: 'https://identbeta.familysearch.org',   # for the beta server -- the oauth url
       api_site: 'https://beta.familysearch.org'     # for the beta server -- the api url
      }
 end
 
-# To use the sandbox/integration API
+# For the sandbox/integration server
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :familysearch, Rails.application.secrets.familysearch_key, '',
-    :client_options => { :site => 'https://integration.familysearch.org' }
+  provider :familysearch, ENV['FAMILYSEARCH_KEY'], '',
+    client_options: { site: 'https://integration.familysearch.org' }
 end
+
+#
+# To use with Devise, you'll need something like this
+# in config/initializers/devise.rb and see
+# https://github.com/plataformatec/devise/wiki/OmniAuth:-Overview
+
+config.omniauth :familysearch, ENV['FAMILYSEARCH_KEY'], '', scope: '',
+client_options: {
+  site: 'https://identbeta.familysearch.org',   # for the beta server -- the oauth url
+  api_site: 'https://beta.familysearch.org'     # for the beta server -- the api url
+}
+
+
 ```
 
 ## Auth Hash
@@ -88,10 +97,3 @@ Here's an example Auth Hash available in `request.env['omniauth.auth']`:
 
 https://familysearch.org/developers/docs/guides/oauth2
 
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
