@@ -6,7 +6,8 @@ module OmniAuth
       option :client_options, {
         :site => 'https://api.familysearch.org',
         :authorize_url => '/cis-web/oauth2/v3/authorization',
-        :token_url => '/cis-web/oauth2/v3/token'
+        :token_url => '/cis-web/oauth2/v3/token',
+        :auth_scheme => :request_body,
       }
 
       option :access_token_options, {
