@@ -18,14 +18,6 @@ module OmniAuth
         options.access_token_options.inject({}) { |h,(k,v)| h[k.to_sym] = v; h }
       end
 
-      def request_phase
-        super
-      end
-
-      def authorize_params
-        super
-      end
-
       uid { user_info['id'] }
 
       info do
